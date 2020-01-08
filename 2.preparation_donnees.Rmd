@@ -1,0 +1,350 @@
+---
+title: "Préparation des données"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+---
+
+```{r, echo=FALSE}
+library(readr) # lecture csv
+library(tidyr) # pivot table
+```
+
+# Fusion des informations des pays
+
+## Les pays : codes & noms
+
+```{r message=FALSE}
+donnees_pays = read_csv('1.donnees/codes_pays.csv')
+```
+
+Récupération de la liste des pays sur le site de la FAO.
+
+Il y en a `r nrow(donnees_pays)`.
+
+Pour chacun d'eux, on a :
+*`r names(donnees_pays)`*
+
+## FAO) Population
+
+### ouverture et manipulation
+
+Ouverture et restriction aux colonnes qui nous intéresse.
+
+```{r message=FALSE}
+pop <- read_csv("1.donnees/pop_08_13.csv")
+pop <- pop[c('Code Pays', 'Pays', 'Année', 'Valeur')]
+```
+
+Pivot table pour mettre l'année en colonne
+
+```{r}
+pop = spread(pop, Année, Valeur)
+```
+
+Y a-t-il des valeurs nulles ?
+
+```{r, echo=FALSE}
+m = is.na(pop$`2008`) | is.na(pop$`2013`)
+pop[m,]
+```
+
+On constate que :
+
+- *'Soudan' et 'Soudan (ex)'*  sont considérés comme des pays différents : On les fusionne
+- *'Antilles néerlandaises (ex)'* n'existe plus en 2013 : On va les supprime
+
+```{r, echo=FALSE}
+# fusion du Soudan
+pop[pop$Pays == 'Soudan', '2008'] = pop[pop$Pays == 'Soudan (ex)', '2008']
+# suppression
+pop = pop[pop$Pays != 'Antilles néerlandaises (ex)' & pop$Pays != 'Soudan (ex)',]
+```
+
+On change l'unité de la population
+
+```{r}
+pop['2008'] = pop['2008'] * 1000
+pop['2013'] = pop['2013'] * 1000
+```
+
+Et on supprime la colonne `Pays` (on garde `Code Pays`) et on renomme les colonnes
+
+```{r, echo=FALSE}
+pop <- pop[c("Code Pays", "2008", "2013")]
+names(pop) = c("code_pays_fao", "pop_08", "pop_13")
+```
+
+### ajout à pays_infos
+
+```{r}
+donnees_pays = merge(donnees_pays, pop, by='code_pays_fao', all.x=TRUE)
+```
+
+## FAO) Disponibilité alimentaire générales et animale
+
+### ouverture et manipulation
+
+Ouverture et restriction des données alimentaires
+
+```{r, message=FALSE}
+disp_alim_general_anim <- read_csv("1.donnees/disp_alim_general_anim_13.csv")
+disp_alim_general_anim = disp_alim_general_anim[,c('Code Pays', 'Élément', 'Produit', 'Valeur')]
+```
+
+On remplace les colonnes `Élément` et `Produit` par une version **concaténée** pour avoir 4 modalités par pays :
+
+- Disponibilité alimentaire (Kcal/personne/jour) - Total General
+- Disponibilité alimentaire (Kcal/personne/jour) - Produits Animaux
+- Disponibilité de protéines en quantité (g/personne/jour) - Total General
+- Disponibilité de protéines en quantité (g/personne/jour) - Produits Animaux
+
+```{r}
+disp_alim_general_anim['elem_prod'] = paste(disp_alim_general_anim$Élément, disp_alim_general_anim$Produit)
+disp_alim_general_anim = disp_alim_general_anim[, c('Code Pays','elem_prod','Valeur')]
+```
+
+On fait un **pivot table** pour mettre en colonne cette **version concaténée** et on renomme les colonnes :
+
+```{r}
+disp_alim_general_anim = spread(disp_alim_general_anim, elem_prod, Valeur)
+names(disp_alim_general_anim) = c("code_pays_fao","disp_alim_anim__kcal_hab_jr", "disp_alim_general__kcal_hab_jr","disp_prot_anim__g_hab_jr", "disp_prot_general__g_hab_jr")
+```
+
+### ajout à pays_infos
+
+```{r}
+donnees_pays = merge(donnees_pays, disp_alim_general_anim, by='code_pays_fao', all.x=TRUE)
+```
+
+## FAO) Poulet : prix de production
+
+### ouverture et manipulation
+
+Ouverture, projection et renommage des colonnes
+
+```{r, message=FALSE}
+prix_prod_poulet = read_csv('1.donnees/prix_prod_poulet_13.csv')
+prix_prod_poulet = prix_prod_poulet[c('Code zone', 'Valeur')]
+names(prix_prod_poulet) = c('code_pays_fao', 'prix_prod_poulet__usd_tonne')
+```
+
+### ajout à pays_infos
+
+```{r}
+donnees_pays = merge(donnees_pays, prix_prod_poulet, by='code_pays_fao', all.x=TRUE)
+```
+
+## FAO) Volaille : importation, production et disponibilité alimentaire
+
+### ouverture et manipulation
+
+Ouverture et projection
+
+```{r, message=FALSE}
+import_prod_disp_alim_volaille = read_csv('1.donnees/import_prod_disp_alim_volaille_13.csv')
+import_prod_disp_alim_volaille = import_prod_disp_alim_volaille[c('Code Pays', 'Élément', 'Valeur')]
+```
+
+Pivot table des elements et renommage des colonnes
+
+```{r}
+import_prod_disp_alim_volaille = spread(import_prod_disp_alim_volaille, Élément, Valeur)
+names(import_prod_disp_alim_volaille) = c('code_pays_fao', 'disp_alim_volaille__kcal_hab_jr', 'import_volaille__ktonne', 'prod_volaille__ktonne')
+```
+
+### ajout à pays_infos
+
+```{r}
+donnees_pays = merge(donnees_pays, import_prod_disp_alim_volaille, by='code_pays_fao', all.x=TRUE)
+```
+
+## Pouvoir d'achat
+
+Source : [data world bank](https://data.worldbank.org/indicator/NY.GDP.PCAP.PP.CD?end=2013&start=2008&year_high_desc=true)
+
+### ouverture et manipulation
+
+pouvoir d'achat mondialement normalisé 
+
+```{r, message=FALSE}
+pib_hab = read_csv('1.donnees/pib_hab_1960-2017.csv')
+pib_hab = pib_hab[c('Country Code', '2008', '2013')]
+names(pib_hab) = c('ISO3', 'pib_hab_08', 'pib_hab_13')
+```
+
+### ajout à pays_infos
+
+```{r}
+donnees_pays = merge(donnees_pays, pib_hab, by='ISO3', all.x=TRUE)
+```
+
+## Risques des pays 
+
+Source : [Coface](http://www.coface.fr/Etudes-economiques-et-risque-pays)
+
+### ouverture et manipulation
+
+```{r, message=FALSE}
+risques_pays = read_csv('1.donnees/risques_pays_18.csv')
+risques_pays = risques_pays[c('ISO3', 'indice_risque', 'indice_affaire')]
+```
+
+### ajout a pays_infos
+
+```{r}
+donnees_pays = merge(donnees_pays, risques_pays, by='ISO3', all.x=TRUE)
+```
+
+## Distance à la France
+
+Source : [github de rahlbot](https://github.com/rahulbot/distances-between-countries)
+
+### ouverture et manipulation
+
+```{r, message=FALSE}
+distance_france = read_csv('1.donnees/distance_france.csv')
+names(distance_france) = c('ISO3', 'distance_fr__km')
+```
+
+### ajout à pays_infos
+
+```{r}
+donnees_pays = merge(donnees_pays, distance_france, by='ISO3', all.x=TRUE)
+```
+
+## Membres de L'EEE
+
+Source : [Wikipedia](https://fr.wikipedia.org/wiki/Espace_%C3%A9conomique_europ%C3%A9en)
+
+### ouverture et manipulation
+
+```{r, message=FALSE}
+membres_eee = read_csv('1.donnees/membres_eee.csv')
+names(membres_eee) = c('ISO3')
+membres_eee$membre_eee = 'oui'
+```
+
+### ajout à pays_infos
+
+```{r}
+donnees_pays = merge(donnees_pays, membres_eee, by='ISO3', all.x=TRUE)
+donnees_pays[is.na(donnees_pays$membre_eee), 'membre_eee'] = 'non'
+```
+
+-------------------
+
+# Calculs de nouvelles informations
+
+## Evolution de la population
+
+On va maintenant construire la colonne :
+
+    Différence de population entre une année antérieure (au choix) et l'année courante, exprimée en pourcentage.
+
+```{r}
+donnees_pays['pop_evol_5a_pt'] = (donnees_pays['pop_13'] - donnees_pays['pop_08']) / donnees_pays['pop_08'] * 100
+```
+## pourcentage de disponibilité en proteine animale
+
+    Calcul de la  Proportion de protéines d'origine animale par rapport à la quantité totale 
+    de protéines dans la disponibilité alimentaire du pays.
+
+```{r}
+donnees_pays['disp_prot_anim__pt'] = donnees_pays['disp_prot_anim__g_hab_jr'] / donnees_pays['disp_prot_general__g_hab_jr'] * 100
+```
+
+## Evolution du pouvoir d'achat
+
+```{r}
+donnees_pays['pib_evol_5a_pt'] = (donnees_pays['pib_hab_13'] - donnees_pays['pib_hab_08']) / donnees_pays['pib_hab_08'] * 100
+```
+
+## volaille importée consommée (par habitant)
+
+```{r}
+donnees_pays['import_volaille__kg_hab_an'] = (donnees_pays['import_volaille__ktonne'] * 1e6) / donnees_pays['pop_13']
+```
+
+## volaille produite nationalement consommée (par habitant)
+
+```{r}
+donnees_pays['prod_volaille__kg_hab_an'] = (donnees_pays['prod_volaille__ktonne'] * 1e6) / donnees_pays['pop_13']
+```
+
+## quantification des indices de risque
+
+```{r}
+donnees_pays$indice_risque  = as.numeric(factor(donnees_pays$indice_risque, levels=c('a1', 'a2', 'a3', 'a4', 'b', 'c', 'd', 'e')))
+donnees_pays$indice_affaire  = as.numeric(factor(donnees_pays$indice_affaire, levels=c('a1', 'a2', 'a3', 'a4', 'b', 'c', 'd', 'e')))
+```
+
+# Nettoyage des données
+
+### suppression de la Chine (on garde les provinces)
+
+```{r}
+donnees_pays = donnees_pays[donnees_pays$pays != 'Chine', ]
+```
+
+### Suppression des petits pays
+
+Les pays de moins de 500k hab. contiennent 38% des valeurs nulles.
+On préfère les supprimer
+
+```{r}
+donnees_pays = donnees_pays[donnees_pays$pop_13 >= 500000, ]
+```
+
+### Suppression de la corée du Nord
+
+6 Valeurs nulles et de toute manière peu réputé pour son libre échange
+
+```{r}
+donnees_pays = donnees_pays[!donnees_pays$ISO3 == 'PRK', ]
+```
+
+# Projection et enregistrement
+
+```{r}
+donnees_pays = donnees_pays[c(
+  'ISO3',
+#  'code_pays_fao',
+  'ISO2',
+  'pays',
+
+#  'pop_08',
+  'pop_13',
+
+#  'disp_alim_anim__kcal_hab_jr',
+  'disp_alim_general__kcal_hab_jr',
+#  'disp_prot_anim__g_hab_jr',
+  'disp_prot_general__g_hab_jr',
+
+  'prix_prod_poulet__usd_tonne',
+
+  'disp_alim_volaille__kcal_hab_jr',
+#  'import_volaille__ktonne',
+#  'prod_volaille__ktonne',
+
+#  'pib_hab_08',
+  'pib_hab_13',
+
+  'indice_risque',
+  'indice_affaire',
+
+  'distance_fr__km',
+
+  'membre_eee',
+
+  'pop_evol_5a_pt',
+  'disp_prot_anim__pt',
+  'import_volaille__kg_hab_an',
+  'prod_volaille__kg_hab_an'
+)]
+
+write.csv(donnees_pays, file = '3.donnees_propres/donnees_pays.csv', row.names = FALSE)
+```
+

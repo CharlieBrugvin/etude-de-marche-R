@@ -1,0 +1,176 @@
+ISO3,ISO2,code_pays_fao,pays
+AFG,AF,2,Afghanistan
+AGO,AO,7,Angola
+ALB,AL,3,Albanie
+ARE,AE,225,Émirats arabes unis
+ARG,AR,9,Argentine
+ARM,AM,1,Arménie
+ATG,AG,8,Antigua-et-Barbuda
+AUS,AU,10,Australie
+AUT,AT,11,Autriche
+AZE,AZ,52,Azerbaïdjan
+BEL,BE,255,Belgique
+BEN,BJ,53,Bénin
+BFA,BF,233,Burkina Faso
+BGD,BD,16,Bangladesh
+BGR,BG,27,Bulgarie
+BHS,BS,12,Bahamas
+BIH,BA,80,Bosnie-Herzégovine
+BLR,BY,57,Bélarus
+BLZ,BZ,23,Belize
+BMU,BM,17,Bermudes
+BOL,BO,19,Bolivie (État plurinational de)
+BRA,BR,21,Brésil
+BRB,BB,14,Barbade
+BRN,BN,26,Brunéi Darussalam
+BWA,BW,20,Botswana
+CAF,CF,37,République centrafricaine
+CAN,CA,33,Canada
+CHE,CH,211,Suisse
+CHL,CL,40,Chili
+CHN,CN,41,"Chine, continentale"
+CIV,CI,107,Côte d'Ivoire
+CMR,CM,32,Cameroun
+COG,CG,46,Congo
+COL,CO,44,Colombie
+CPV,CV,35,Cabo Verde
+CRI,CR,48,Costa Rica
+CUB,CU,49,Cuba
+CYP,CY,50,Chypre
+CZE,CZ,167,Tchéquie (la)
+DEU,DE,79,Allemagne
+DJI,DJ,72,Djibouti
+DMA,DM,55,Dominique
+DNK,DK,54,Danemark
+DOM,DO,56,République dominicaine
+DZA,DZ,4,Algérie
+ECU,EC,58,Équateur
+EGY,EG,59,Égypte
+ESP,ES,203,Espagne
+EST,EE,63,Estonie
+ETH,ET,238,Éthiopie
+FIN,FI,67,Finlande
+FJI,FJ,66,Fidji
+FRA,FR,68,France
+GAB,GA,74,Gabon
+GBR,GB,229,Royaume-Uni
+GEO,GE,73,Géorgie
+GHA,GH,81,Ghana
+GIN,GN,90,Guinée
+GMB,GM,75,Gambie
+GNB,GW,175,Guinée-Bissau
+GRC,GR,84,Grèce
+GRD,GD,86,Grenade
+GTM,GT,89,Guatemala
+GUY,GY,91,Guyana
+HKG,HK,96,Chine - RAS de Hong-Kong
+HND,HN,95,Honduras
+HRV,HR,98,Croatie
+HTI,HT,93,Haïti
+HUN,HU,97,Hongrie
+IDN,ID,101,Indonésie
+IND,IN,100,Inde
+IRL,IE,104,Irlande
+IRN,IR,102,Iran (République islamique d')
+IRQ,IQ,103,Iraq
+ISL,IS,99,Islande
+ISR,IL,105,Israël
+ITA,IT,106,Italie
+JAM,JM,109,Jamaïque
+JOR,JO,112,Jordanie
+JPN,JP,110,Japon
+KAZ,KZ,108,Kazakhstan
+KEN,KE,114,Kenya
+KGZ,KG,113,Kirghizistan
+KHM,KH,115,Cambodge
+KIR,KI,83,Kiribati
+KNA,KN,188,Saint-Kitts-et-Nevis
+KOR,KR,117,République de Corée
+KWT,KW,118,Koweït
+LAO,LA,120,République démocratique populaire lao
+LBN,LB,121,Liban
+LBR,LR,123,Libéria
+LCA,LC,189,Sainte-Lucie
+LKA,LK,38,Sri Lanka
+LSO,LS,122,Lesotho
+LTU,LT,126,Lituanie
+LUX,LU,256,Luxembourg
+LVA,LV,119,Lettonie
+MAC,MO,128,Chine - RAS de Macao
+MAR,MA,143,Maroc
+MDA,MD,146,République de Moldova
+MDG,MG,129,Madagascar
+MDV,MV,132,Maldives
+MEX,MX,138,Mexique
+MKD,MK,154,l'ex-République yougoslave de Macédoine
+MLI,ML,133,Mali
+MLT,MT,134,Malte
+MMR,MM,28,Myanmar
+MNE,ME,273,Monténégro
+MNG,MN,141,Mongolie
+MOZ,MZ,144,Mozambique
+MRT,MR,136,Mauritanie
+MUS,MU,137,Maurice
+MWI,MW,130,Malawi
+MYS,MY,131,Malaisie
+NAM,NAM,147,Namibie
+NCL,NC,153,Nouvelle-Calédonie
+NER,NE,158,Niger
+NGA,NG,159,Nigéria
+NIC,NI,157,Nicaragua
+NLD,NL,150,Pays-Bas
+NOR,NO,162,Norvège
+NPL,NP,149,Népal
+NZL,NZ,156,Nouvelle-Zélande
+OMN,OM,221,Oman
+PAK,PK,165,Pakistan
+PAN,PA,166,Panama
+PER,PE,170,Pérou
+PHL,PH,171,Philippines
+POL,PL,173,Pologne
+PRK,KP,116,République populaire démocratique de Corée
+PRT,PT,174,Portugal
+PRY,PY,169,Paraguay
+PYF,PF,70,Polynésie française
+ROU,RO,183,Roumanie
+RUS,RU,185,Fédération de Russie
+RWA,RW,184,Rwanda
+SAU,SA,194,Arabie saoudite
+SDN,SD,276,Soudan
+SEN,SN,195,Sénégal
+SLB,SB,25,Îles Salomon
+SLE,SL,197,Sierra Leone
+SLV,SV,60,El Salvador
+SRB,RS,272,Serbie
+STP,ST,193,Sao Tomé-et-Principe
+SUR,SR,207,Suriname
+SVK,SK,199,Slovaquie
+SVN,SI,198,Slovénie
+SWE,SE,210,Suède
+SWZ,SZ,209,Eswatini
+TCD,TD,39,Tchad
+TGO,TG,217,Togo
+THA,TH,216,Thaïlande
+TJK,TJ,208,Tadjikistan
+TKM,TM,213,Turkménistan
+TLS,TL,176,Timor-Leste
+TTO,TT,220,Trinité-et-Tobago
+TUN,TN,222,Tunisie
+TUR,TR,223,Turquie
+TWN,TW,214,"Chine, Taiwan Province de"
+TZA,TZ,215,République-Unie de Tanzanie
+UGA,UG,226,Ouganda
+UKR,UA,230,Ukraine
+URY,UY,234,Uruguay
+USA,US,231,États-Unis d'Amérique
+UZB,UZ,235,Ouzbékistan
+VCT,VC,191,Saint-Vincent-et-les Grenadines
+VEN,VE,236,Venezuela (République bolivarienne du)
+VNM,VN,237,Viet Nam
+VUT,VU,155,Vanuatu
+WSM,WS,244,Samoa
+YEM,YE,249,Yémen
+ZAF,ZA,202,Afrique du Sud
+ZMB,ZM,251,Zambie
+ZWE,ZW,181,Zimbabwe
+NA,NA,351,Chine

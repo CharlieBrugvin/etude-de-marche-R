@@ -1,0 +1,429 @@
+---
+title: "Analyse Exploratoire"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+---
+
+```{r, echo=FALSE, message=FALSE}
+library("FactoMineR") # pour PCA
+library("factoextra") # get_... de la PCA
+library("corrplot") # pour faire une 'heatmap' de points
+library("ggpubr") # pour enregister les ACPs au format tiff
+```
+
+ouverture de donnees_pays, on labelise les lignes avec le code iso du pays
+
+```{r}
+donnees_pays = read.csv('3.donnees_propres/donnees_pays.csv')
+rownames(donnees_pays) = donnees_pays$ISO3
+```
+
+# Exploration des pays cibles
+
+## Population 1 : le monde entier
+
+On distingue les variables utilisées pour le calcul et celles utilisées pour illustrer.
+
+```{r echo=FALSE}
+# quantité de valeurs nulles par variables
+prct_val_na = round(sort(colMeans(is.na(donnees_pays)), decreasing = TRUE) * 100)
+#prct_val_na[prct_val_na != 0]
+```
+
+On utilise toutes les variables quantitatives sauf le prix de production du poulet (46% de valeurs nulles)
+
+```{r}
+# Variables quantitatives utilisées : 
+pop1.var.quant = c(
+  'disp_alim_general__kcal_hab_jr',
+  'disp_prot_general__g_hab_jr',
+  'disp_alim_volaille__kcal_hab_jr',
+  'pib_hab_13',
+  'indice_risque',
+  'indice_affaire',
+  'distance_fr__km',
+  'pop_13',
+  'pop_evol_5a_pt',
+  'disp_prot_anim__pt',
+  'import_volaille__kg_hab_an',
+  'prod_volaille__kg_hab_an'
+)
+
+# Variables illustratives :
+pop1.var.quant.supp = c()
+pop1.var.qual.supp = c()
+```
+
+### Clustering ascendant hiérarchique
+
+#### Préparation des données
+
+```{r}
+pop1.cah = donnees_pays[,pop1.var.quant]
+pop1.cah = scale(pop1.cah) # on normalise les données
+```
+
+#### Calcul
+
+```{r}
+pop1.cah.result = hclust(dist(pop1.cah))
+```
+
+#### Dendrogramme
+
+```{r}
+png(file="5.resultats/dendrogramme.png",width=1800,height=750)
+par(cex=0.8, mar=c(5, 8, 4, 1))
+plot(pop1.cah.result, xlab="", ylab="", main="", hang = -1)
+par(cex=2)
+title(xlab="Pays", ylab="Distance", main="")
+dev.off()
+```
+
+**Le Dendrogramme est exporté sous forme d'image**
+
+Selection à 5 groupes
+
+```{r}
+pop1.cah.groupes = factor(cutree(pop1.cah.result, 5))
+```
+
+```{r}
+write.csv2(pop1.cah.groupes, file = '5.resultats/groupe_pays.csv', col.names=NA)
+```
+
+
+#### calcul des centroïdes
+
+```{r}
+centroides = data.frame() # je créé un df vide
+
+# pour chaque groupes,
+nom_groupes = unique(pop1.cah.groupes)
+for (i in nom_groupes) {
+  # je recupere les valeurs du cluster
+  groupe = subset(pop1.cah, pop1.cah.groupes == i)
+  # je calcule le centroide en faisant une moyenne par colonne
+  centroid = colMeans(groupe, na.rm = TRUE)
+  # je l'ajoute au df
+  centroides = rbind(centroides, centroid)
+}
+
+# je renomme chaque colonne avec le nom du dernier centroide calculé
+names(centroides) = names(centroid)
+rownames(centroides) = nom_groupes
+```
+
+On va determiner le pays qui est le plus proche de chaque centroide
+
+```{r}
+# on calcule la distance entre chaque pays et chaque centroides
+dist_cent_pays = dist(rbind(pop1.cah, centroides))
+# on convertie l'objet dist en matrice
+dist_cent_pays = as.matrix(dist_cent_pays)
+# on restreind
+dist_cent_pays = dist_cent_pays[as.character(nom_groupes), 
+                                row.names(donnees_pays)]
+```
+
+on renomme les centroides avec leur numero et le pays le plus proche
+
+```{r}
+nv_noms_groupes = c()
+for (nom in nom_groupes) {
+  pays = names(which.min(dist_cent_pays[nom,]))
+  nv_nom =  paste(nom, ' (', pays, ')', sep = '')
+  nv_noms_groupes = c(nv_noms_groupes, nv_nom)
+}
+rownames(centroides) = nv_noms_groupes
+```
+
+```{r}
+heatmap(t(as.matrix(centroides)), Rowv = NA, Colv = NA, margins = c(6,6))
+```
+
+```{r}
+write.csv2(centroides, file = '5.resultats/centroides.csv')
+```
+
+### ACP
+
+On définie les variables utilisées et l'indice des variables des supplémentaires
+
+```{r}
+# toute les variables utilisées
+pop1.var.all = c(pop1.var.quant, pop1.var.quant.supp, pop1.var.qual.supp)
+# l'indice des variables supplémentaires
+pop1.var.qual.supp.indice = which(pop1.var.all %in% pop1.var.qual.supp)
+pop1.var.quant.supp.indice = which(pop1.var.all %in% pop1.var.quant.supp)
+```
+
+```{r}
+pop1.pca.result = PCA(donnees_pays[,pop1.var.all],
+                      quanti.sup = if(length(pop1.var.quant.supp.indice) == 0) NULL else pop1.var.quant.supp.indice,
+                      quali.sup  = if(length(pop1.var.qual.supp.indice) == 0) NULL else pop1.var.qual.supp.indice,
+                      graph = FALSE)
+pop1.pca.result.var = get_pca_var(pop1.pca.result)
+```
+
+#### Visualisation de l'ACP
+
+##### Eboulis des valeurs propres
+
+```{r}
+fviz_eig(pop1.pca.result, addlabels = TRUE)
+```
+
+##### qualité de la représentation
+
+```{r}
+corrplot(pop1.pca.result.var$cos2, is.corr=FALSE)
+```
+
+##### cercle des corrélations
+
+```{r}
+fviz_pca_var(pop1.pca.result,
+             title='Cercle de corrélation des variables',
+             col.var = "cos2",
+             gradient.cols =  c("#00AFBB", "#E7B800", "#FC4E07"),
+             geom=c('arrow', 'text'), # point
+             labelsize = 3,
+             repel = TRUE
+)
+
+fviz_pca_var(pop1.pca.result,
+             title='Cercle de corrélation des variables',
+             col.var = "cos2",
+
+             gradient.cols =  c("#00AFBB", "#E7B800", "#FC4E07"),
+             geom=c('point', 'text'), # point
+             labelsize = 3,
+             repel = TRUE
+)
+
+fviz_pca_var(pop1.pca.result,
+             title='Cercle de corrélation des variables',
+             col.var = "cos2",
+             select.var=list(cos2 = 0.5),
+             gradient.cols =  c("#00AFBB", "#E7B800", "#FC4E07"),
+             geom=c('point', 'text'), # point
+             labelsize = 3,
+             repel = TRUE
+)
+```
+
+##### nuages des individus
+
+On génère la figure
+
+```{r}
+figure = fviz_pca_ind(pop1.pca.result, 
+             geom=c("text", 'point'),
+             labelsize=4,
+             habillage = pop1.cah.groupes,
+             alpha.ind="cos2",
+             addEllipses=TRUE,
+             repel = TRUE,
+             mean.point = FALSE
+)
+
+# on l'enregistre
+
+tiff("5.resultats/pop1.acp.tiff", units="in", width=16, height=10, res=300)
+print(figure)
+dev.off() # Close the pdf device
+figure
+```
+
+## Population 2 : Restriction aux pays plus proche de la france
+
+On détermine le groupe auquel la France appartient
+
+```{r}
+groupe = pop1.cah.groupes['FRA']
+```
+
+On distingue les variables utilisées pour le calcul et celles utilisées pour illustrer.
+
+```{r}
+# quantité de valeurs nulles par variables
+prct_val_na = round(sort(colMeans(is.na(donnees_pays[pop1.cah.groupes == groupe,])), decreasing = TRUE) * 100)
+prct_val_na[prct_val_na != 0]
+```
+
+```{r}
+pop2.var.quant = c(
+  'prix_prod_poulet__usd_tonne',
+  'import_volaille__kg_hab_an',
+  'prod_volaille__kg_hab_an',
+  
+  'pib_hab_13',
+  'indice_risque'
+)
+
+pop2.var.quant.supp = c('pop_13', 'distance_fr__km')
+pop2.var.qual.supp = c('membre_eee')
+```
+
+### ACP
+
+On définie les variables utilisées et l'indice des variables des supplémentaires
+
+```{r}
+# toute les variables utilisées
+pop2.var.all = c(pop2.var.quant, pop2.var.quant.supp, pop2.var.qual.supp)
+# l'indice des variables qualitatives supplémentaires
+pop2.var.qual.supp.indice = which(pop2.var.all %in% pop2.var.qual.supp)
+pop2.var.quant.supp.indice = which(pop2.var.all %in% pop2.var.quant.supp)
+```
+
+On définie le dataframe, et l'on renomme chaque ligne pour ajouter des informations
+
+```{r}
+pop2.pca = donnees_pays[pop1.cah.groupes == groupe,
+                        pop2.var.all]
+rownames(pop2.pca) = paste(
+  rownames(pop2.pca), ' ',
+  round(pop2.pca$pop_13 / 1e6), 'm ',
+  round(pop2.pca$distance_fr__km), 'km',
+  sep='')
+```
+
+```{r}
+pop2.pca.result = PCA(
+  X = pop2.pca,
+  quanti.sup = if(length(pop2.var.quant.supp.indice) == 0) NULL else pop2.var.quant.supp.indice,
+  quali.sup  = if(length(pop2.var.qual.supp.indice) == 0) NULL else pop2.var.qual.supp.indice,
+  graph = FALSE
+  )
+pop2.pca.result.var = get_pca_var(pop2.pca.result)
+```
+
+#### Visualisation de l'ACP
+
+##### éboulis des valeurs propres
+
+```{r}
+fviz_eig(pop2.pca.result, addlabels = TRUE)
+```
+
+##### qualité de la représentation
+
+```{r}
+corrplot(pop2.pca.result.var$cos2, is.corr=FALSE)
+```
+
+##### cercle des corrélations
+
+```{r}
+fviz_pca_var(pop2.pca.result,
+             title='Cercle de corrélation des variables',
+             col.var = "cos2",
+             gradient.cols =  c("#00AFBB", "#E7B800", "#FC4E07"),
+             #alpha.var = "cos2",
+             geom=c('arrow', 'text'),
+             labelsize = 3,
+             repel = TRUE
+)
+
+fviz_pca_var(pop2.pca.result,
+             title='Cercle de corrélation des variables',
+             col.var = "cos2",
+             invisible='quanti.sup',
+             gradient.cols =  c("#00AFBB", "#E7B800", "#FC4E07"),
+             #alpha.var = "cos2",
+             geom=c('point', 'text'),
+             labelsize = 3,
+             repel = TRUE
+)
+```
+
+##### nuages des individus
+
+```{r}
+# on créé la figure
+figure = fviz_pca_ind(pop2.pca.result, 
+             geom=c("text", 'point'),
+             habillage = if(length(pop2.var.qual.supp.indice) == 0) 'none' else pop2.var.qual.supp.indice,
+             labelsize=3,
+             alpha.ind="cos2",
+             #pointsize='5',
+             repel = TRUE,
+             mean.point = FALSE
+)
+
+# On l'enregistre
+tiff("5.resultats/pop2.acp.tiff", units="in", width=8, height=5, res=300)
+print(figure)
+dev.off() # Close the pdf device
+# on l'affiche
+figure
+```
+
+## Conclusion
+
+Les pays intéressants :
+
+- Allemagne
+- Pays Bas
+- Luxembourg
+- Suisse
+
+# Tests statistiques
+
+## Test d'adéquation à la loi normale
+
+```{r}
+echantillon = donnees_pays$disp_alim_general__kcal_hab_jr
+```
+
+On plot
+
+```{r}
+h <- hist(echantillon, breaks = 20, col = "skyblue2", xlab = 'disponibilité alimentaire', ylab = 'effectif', main = '', freq = FALSE)
+
+x_norm = seq(min(echantillon), max(echantillon), length = 40)
+y_norm = dnorm(x_norm,mean(echantillon),sd(echantillon))
+
+y_norm <- y_norm * diff(h$mids[1:2]) * length(echantillon) 
+
+lines(x_norm, y_norm, col = "red", lwd=2)
+```
+
+Hypothèse nulle : l'échantillon suit une loi normale
+Alternative : l'échantillon ne suit pas une loi normale
+
+Kolmogorov-Smirnoc car n > 60
+
+```{r}
+ks.test(echantillon,"pnorm",mean=mean(echantillon),sd=sd(echantillon))
+```
+
+On a 60% de chance de rejetter l'hypothèse nulle à tord.
+
+*On a 60% de chance de se tromper si on affirme que l'échantillon ne suit pas une loi normale*
+
+## On compare deux échantillons
+
+Les pays du groupe 1 & du groupe 3
+
+```{r}
+echantillon1 = subset(donnees_pays, pop1.cah.groupes == 1)$disp_alim_general__kcal_hab_jr
+echantillon2 = subset(donnees_pays, pop1.cah.groupes == 3)$disp_alim_general__kcal_hab_jr
+```
+
+```{r}
+var.test(echantillon1, echantillon2) # egalité des variances
+```
+
+p-val de 0.5%, on peut rejetter l'hypothèse d'égalité des variances.
+
+Les lois ne sont donc pas les mêmes
+
+```{r}
+t.test(echantillon1, echantillon2) # egalité des moyenne
+```
