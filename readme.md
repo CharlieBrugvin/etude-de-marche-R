@@ -18,11 +18,3 @@ Le dossier contient :
 - `4.analyse_exploratoire.Rmd`
 
 Ainsi qu'un fichier `présentation.pdf`, utilisé comme support lors de la soutenance.
-
------------------------------------------------------------------------------------
-
-Pour lancer les notebooks :
-- lancer la commande `jupyter-notebook` dans une console positionné dans le dossier parent.
-
-Pour lancer les scripts Python :
-- lancer la commande `python {nom_du_script}` dans une console.
