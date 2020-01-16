@@ -1,10 +1,17 @@
 Ce projet a été réalisé dans le cadre de la formation [Data Analyst](https://openclassrooms.com/fr/paths/65-data-analyst), sur la plateforme OpenClassrooms.
 
-Voir le fichier [présentation.pdf](présentation.pdf), utilisé comme support lors de la soutenance.
+## Scénario
 
-## Sujet
+> Votre entreprise d'agroalimentaire souhaite se développer à l'international. Elle est spécialisée dans... le poulet ! L'international, oui, mais pour l'instant, le champ des possibles est bien large : aucun pays particulier ni aucun continent n'est pour le moment choisi. Tous les pays sont envisageables ! Votre objectif sera d'aider à cibler plus particulièrement certains pays, dans le but d'approfondir ensuite l'étude de marché. Plus particulièrement, l'idéal serait de produire des "groupes" de pays, plus ou moins gros, dont on connaît les caractéristiques.
 
-Effectuer une analyse exploratoire de données dans le cadre d'une étude de marché d'une entreprise dans l'agro-alimentaire fictive. Analyse de données alimentaires, économiques et politiques des pays du monde. 
+Dans un premier temps, la stratégie est plutôt d'exporter les produits plutôt que de produire sur place, c'est-à-dire dans le(s) nouveau(x) pays ciblé(s).
+
+<br />
+
+:arrow_forward: [Voir ma présentation des résultats](présentation.pdf).
+
+
+---------------------------------
 
 ## Organisation des sources
 
