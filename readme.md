@@ -1,5 +1,7 @@
 Ce projet a été réalisé dans le cadre de la formation [Data Analyst](https://openclassrooms.com/fr/paths/65-data-analyst), sur la plateforme OpenClassrooms.
 
+Voir le fichier [présentation.pdf](présentation.pdf), utilisé comme support lors de la soutenance.
+
 ## Sujet
 
 Effectuer une analyse exploratoire de données dans le cadre d'une étude de marché d'une entreprise dans l'agro-alimentaire fictive. Analyse de données alimentaires, économiques et politiques des pays du monde. 
@@ -16,5 +18,3 @@ Le dossier contient :
 2 *R notebooks*
 - `2.preparation_donnees.Rmd`
 - `4.analyse_exploratoire.Rmd`
-
-Ainsi qu'un fichier `présentation.pdf`, utilisé comme support lors de la soutenance.
