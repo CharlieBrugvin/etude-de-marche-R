@@ -6,7 +6,7 @@ Ce projet a été réalisé dans le cadre de la formation [Data Analyst](https:/
 
 <br />
 
-:arrow_forward: [Voir ma présentation des résultats](présentation.pdf).
+### :arrow_forward: [Voir ma présentation des résultats](présentation.pdf)
 
 
 ---------------------------------
