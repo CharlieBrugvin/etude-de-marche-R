@@ -8,6 +8,9 @@ Ce projet a été réalisé dans le cadre de la formation [Data Analyst](https:/
 
 ### :arrow_forward: [Voir ma présentation des résultats](présentation.pdf)
 
+### :notebook: [Notebook : Nettoyage des données](https://htmlpreview.github.io/?https://github.com/CharlieBrugvin/etude-de-marche-en-R/blob/master/2.preparation_donnees.html)
+
+### :notebook: [Notebook : Analyse exploratoire](https://htmlpreview.github.io/?https://github.com/CharlieBrugvin/etude-de-marche-en-R/blob/master/4.analyse_exploratoire.html)
 
 ---------------------------------
 
