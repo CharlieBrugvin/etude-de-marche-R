@@ -1,6 +1,6 @@
-## Introduction
-
 *Ce projet a été réalisé dans le cadre de la formation [Data Analyst](https://openclassrooms.com/fr/paths/65-data-analyst), sur la plateforme OpenClassrooms.*
+
+## Introduction
 
 Dans ce projet, j'ai réalisé une étude de marché pour une entreprise fictive spécialisée dans la vente de poulets. Le but était de déterminer les pays les plus propices à une insertion.
 
