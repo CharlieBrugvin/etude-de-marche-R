@@ -19,13 +19,11 @@ J'ai alors présenté leurs données clefs telles que le PIB/hab, l'indice de ri
 
 ## Organisation des sources
 
-Le dossier contient :
-
-*3 dossiers*
+3 dossiers :
 - `1.donnees` : les données initiales du projet
 - `3.donnees_propres` : les données nettoyées du projet 
 - `5.resultats` : graphiques et données générées lors de l'étude
     
-2 *R notebooks*
+2 R notebooks :
 - `2.preparation_donnees.Rmd`
 - `4.analyse_exploratoire.Rmd`
