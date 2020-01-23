@@ -1,6 +1,6 @@
 *Ce projet a été réalisé dans le cadre de la formation [Data Analyst](https://openclassrooms.com/fr/paths/65-data-analyst), sur la plateforme OpenClassrooms.*
 
-## Etude de marché
+## Étude de marché
 
 ### Introduction
 
