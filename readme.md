@@ -1,6 +1,6 @@
 *Ce projet a été réalisé dans le cadre de la formation [Data Analyst](https://openclassrooms.com/fr/paths/65-data-analyst), sur la plateforme OpenClassrooms.*
 
-## Introduction
+### Introduction
 
 Dans ce projet, j'ai réalisé une étude de marché pour une entreprise fictive spécialisée dans la vente de poulets. Le but était de déterminer les pays les plus propices à une insertion.
 
@@ -11,13 +11,17 @@ Cela m'a permis au final de sélectionner cinq pays.
 
 J'ai alors présenté leurs données clefs telles que le PIB/hab, l'indice de risque économique, la population, le prix local de production du poulet et la quantité annuelle de volaille importée par habitant.
 
+<br>
+
 :arrow_forward: [Voir ma présentation des résultats](présentation.pdf)
 
 :notebook: [Notebook : Nettoyage des données](https://htmlpreview.github.io/?https://github.com/CharlieBrugvin/etude-de-marche-en-R/blob/master/2.preparation_donnees.html)
 
 :notebook: [Notebook : Analyse exploratoire](https://htmlpreview.github.io/?https://github.com/CharlieBrugvin/etude-de-marche-en-R/blob/master/4.analyse_exploratoire.html)
 
-## Organisation des sources
+<br>
+
+### Organisation des sources
 
 3 dossiers :
 - `1.donnees` : les données initiales du projet
